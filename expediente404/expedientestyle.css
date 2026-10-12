@@ -1,0 +1,324 @@
+/* ==========================================================================
+   EXPEDIENTE 404: ESTILOS 3D, OVERLAYS, CLIMA Y ADMIN PANEL (GLASSMORPHISM)
+   ========================================================================== */
+
+/* Contenedor principal y Canvas */
+#game-container {
+  position: relative;
+  width: 100%;
+  height: 500px; /* Tamaño predeterminado controlado en la vista */
+  margin: 20px auto;
+  max-width: 900px;
+  background-color: #0b0714;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 2px solid #a855f7;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Modo Pantalla Completa automantenido */
+#game-container:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+#game-container:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+  touch-action: none; /* Previene gestos táctiles predeterminados del navegador */
+}
+
+/* ==========================================================================
+   SISTEMA DE ESTAMINA (UI OVERLAY)
+   ========================================================================== */
+
+#stamina-bar-container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 14px;
+  background-color: rgba(15, 23, 42, 0.75);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(6px);
+}
+
+#stamina-bar-fill {
+  width: 100%;
+  height: 100%;
+  background-color: #38bdf8;
+  border-radius: 6px;
+  transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+#stamina-warning {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ef4444;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   UI OVERLAYS Y NOTIFICACIONES DE MUNDO
+   ========================================================================== */
+
+#game-limit-message {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px 24px;
+  background-color: rgba(220, 38, 38, 0.85);
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+#game-limit-message.visible {
+  opacity: 1;
+}
+
+#game-notice {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.9);
+  color: #38bdf8;
+  padding: 10px 22px;
+  border-radius: 20px;
+  border: 1px solid #38bdf8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  pointer-events: none;
+  z-index: 99999;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ==========================================================================
+   PANEL DE ADMINISTRACIÓN (GLASSMORPHISM THEME)
+   ========================================================================== */
+
+.admin-panel-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 10px 18px;
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #38bdf8;
+  border: 1px solid #0284c7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.admin-panel-toggle:hover {
+  background-color: rgba(2, 132, 199, 0.3);
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.admin-panel {
+  position: absolute;
+  top: 60px;
+  right: 15px;
+  width: 230px;
+  background-color: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  padding: 18px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  z-index: 2000;
+  border: 1px solid #334155;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.admin-panel.hidden {
+  display: none !important;
+}
+
+.admin-panel-title {
+  font-weight: 700;
+  color: #38bdf8;
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.admin-panel-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.admin-btn {
+  padding: 8px;
+  background-color: #334155;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.admin-btn:hover {
+  background-color: #475569;
+}
+
+.admin-btn:active {
+  transform: scale(0.96);
+}
+
+.admin-btn-primary {
+  background-color: #0284c7;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.admin-btn-primary:hover {
+  background-color: #0369a1;
+}
+
+/* ==========================================================================
+   VENTANAS MODALES INTERACTIVAS
+   ========================================================================== */
+
+.game-submodal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #0f172a;
+  border: 2px solid #38bdf8;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 750px;
+  height: 520px;
+  color: #ffffff;
+  z-index: 99999;
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.game-submodal.cafe-theme {
+  background: #1c1917;
+  border-color: #f59e0b;
+  max-width: 550px;
+  height: auto;
+  padding: 20px;
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.25);
+}
+
+@keyframes modalScaleIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ==========================================================================
+   ADAPTACIÓN RESPONSIVA (MÓVILES Y TABLETS)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .game-submodal {
+    width: 95%;
+    height: 85vh;
+  }
+
+  #game-limit-message {
+    width: 85%;
+    font-size: 13px;
+  }
+
+  .admin-panel {
+    right: 50%;
+    transform: translateX(50%);
+    top: 65px;
+    width: 90%;
+    max-width: 280px;
+  }
+
+  #stamina-bar-container {
+    width: 180px;
+    bottom: 20px;
+  }
+}
