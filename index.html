@@ -20,14 +20,8 @@
   <!-- Estilos del Juego 3D (Expediente 404) -->
   <link rel="stylesheet" href="expediente404/expedientestyle.css">
 
-  <!-- SDK Oficial de Supabase -->
+  <!-- SDK Oficial de Supabase (Única referencia necesaria) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // Inicialización del Cliente de Supabase
-    const SUPABASE_URL = 'https://zqlyzkcpzaxgigkfwls.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Un7XaxACdF7BDCRC6T1ZTg_Cvk94LuZ';
-    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-  </script>
 
   <!-- Script de Autenticación de Google -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -337,7 +331,7 @@
       </div>
     </section>
 
-    <!-- 5. Marketplace (Con Protector y Trueques de Estrellas por Tokens) -->
+    <!-- 5. Marketplace -->
     <section id="tab-store" class="tab-content">
       <h2>Marketplace</h2>
       <p class="subtitle">Canjea tus recursos acumulados por ventajas exclusivas para tu cuenta.</p>
