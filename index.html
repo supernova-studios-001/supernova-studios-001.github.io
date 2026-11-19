@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Supernova Studios | Plataforma Educativa</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" type="image/png" href="SuperNovaStudiosLogo.png">
   
+  <!-- Verificación de Google Search Console -->
+  <meta name="google-site-verification" content="google561742307e3f9ddc" />
+
   <!-- Código oficial de Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2065424336069998" crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-2065424336069998">
@@ -15,12 +18,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Estilos CSS Principales -->
+  <!-- Estilos CSS Principales y Modulares -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Estilos del Juego 3D (Expediente 404) -->
-  <link rel="stylesheet" href="expediente404/expedientestyle.css">
+  <link rel="stylesheet" href="Centroaprendizaje.css">
+  <link rel="stylesheet" href="Emblemas.css">
+  <link rel="stylesheet" href="Marketplace.css">
+  <link rel="stylesheet" href="Recompensas.css">
+  <link rel="stylesheet" href="Sesion.css">
 
-  <!-- SDK Oficial de Supabase (Única referencia de CDN) -->
+  <!-- Librería Oficial de Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- Script de Autenticación de Google -->
@@ -28,94 +34,18 @@
   <!-- Three.js CDN para gráficos 3D -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body class="halloween-theme">
+<body class="app-layout" style="overflow: hidden;">
 
-  <!-- OVERLAY / EVENTO ESPECIAL DE HALLOWEEN (VISIBLE AL ENTRAR) -->
-  <div id="collaboration-modal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: url('halloween.jpg') no-repeat center center / cover; display: flex; align-items: center; justify-content: center; z-index: 999999; opacity: 1; transition: opacity 0.4s ease, visibility 0.4s;">
-    
-    <style>
-      @keyframes halloweenGlow {
-        0% {
-          box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), inset 0 0 12px rgba(249, 115, 22, 0.3);
-          border-color: #a855f7;
-        }
-        50% {
-          box-shadow: 0 0 40px rgba(249, 115, 22, 0.8), inset 0 0 22px rgba(168, 85, 247, 0.5);
-          border-color: #f97316;
-        }
-        100% {
-          box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), inset 0 0 12px rgba(249, 115, 22, 0.3);
-          border-color: #a855f7;
-        }
-      }
-      .halloween-animated-border {
-        animation: halloweenGlow 3s infinite ease-in-out;
-      }
-      .hw-btn-hover:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.2);
-        box-shadow: 0 8px 25px rgba(249, 115, 22, 0.6) !important;
-      }
-      .hw-card-container {
-        position: relative;
-        z-index: 2;
-        background: linear-gradient(145deg, rgba(23, 15, 38, 0.94), rgba(10, 7, 18, 0.96));
-        border: 2px solid #a855f7;
-        border-radius: 22px;
-        padding: 35px 30px 30px;
-        max-width: 620px;
-        width: 90%;
-        text-align: center;
-        color: #ffffff;
-        font-family: 'Inter', sans-serif;
-        box-sizing: border-box;
-      }
-      .hw-event-badge {
-        background: rgba(249, 115, 22, 0.12);
-        border: 1px solid rgba(249, 115, 22, 0.4);
-        border-radius: 16px;
-        padding: 20px 16px;
-        margin-bottom: 22px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-      }
-    </style>
-
-    <!-- TARJETA PRINCIPAL DEL EVENTO -->
-    <div class="halloween-animated-border hw-card-container">
-      <div style="position: absolute; top: 12px; right: 14px; display: flex; align-items: center; gap: 12px;">
-        <button id="close-x-btn" onclick="document.getElementById('collaboration-modal').style.display='none';" style="background: transparent; border: none; color: #ff4d4d; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1;" title="Cerrar">&times;</button>
-      </div>
-
-      <div style="background: linear-gradient(135deg, #f97316, #a855f7, #ec4899); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 16px; font-weight: 900; letter-spacing: 3px; margin-bottom: 18px; text-transform: uppercase;">
-        EVENTO ESPECIAL DE HALLOWEEN
-      </div>
-
-      <div class="hw-event-badge">
-        <span style="font-size: 2.2rem;">🎃</span>
-        <div style="text-align: left;">
-          <h4 style="margin: 0; font-size: 1rem; color: #f97316; font-weight: 800;">Edición Limitada de Octubre</h4>
-          <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #cbd5e1;">¡Consigue recompensas únicas, insignias de terror y multiplicador de tokens!</p>
-        </div>
-        <span style="font-size: 2.2rem;">👻</span>
-      </div>
-
-      <!-- CONTADOR HASTA EL EVENTO -->
-      <div id="collab-timer" style="font-size: 14px; font-weight: 800; color: #f97316; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);">
-        El evento termina en: Calculando...
-      </div>
-
-      <button id="close-collab-btn" onclick="document.getElementById('collaboration-modal').style.display='none';" class="hw-btn-hover" style="background: linear-gradient(135deg, #f97316 0%, #a855f7 100%); color: #ffffff; border: none; padding: 14px; font-size: 15px; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; box-shadow: 0 4px 18px rgba(168, 85, 247, 0.4);">
-        ¡Unirme al Evento!
-      </button>
+  <!-- Pantalla de Carga / Intro Estilo Duolingo (5 Segundos, sin scroll ni interacción) -->
+  <div id="intro-splash-screen" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 99999; overflow: hidden;">
+    <div class="intro-logo-container" style="width: 100%; height: 100%;">
+      <img src="SuperNovalogo.png" alt="Supernova Studios Logo" class="intro-logo-img" style="width: 100%; height: 100%; object-fit: cover; display: block;">
     </div>
   </div>
 
-  <!-- Pantalla de Login / Overlay -->
-  <div id="welcome-screen" class="overlay">
-    <div class="login-card halloween-animated-border">
+  <!-- Pantalla de Login / Overlay (Aparece si la sesión no está activa) -->
+  <div id="welcome-screen" class="overlay" style="display: none;">
+    <div class="login-card">
       <div class="brand-badge">SUPERNOVA STUDIOS</div>
       <h1>Iniciar Sesión</h1>
       <p>Accede para sincronizar tu racha diaria, insignias y tokens acumulados.</p>
@@ -145,42 +75,157 @@
     </div>
   </div>
 
-  <!-- Encabezado Principal -->
-  <header>
-    <div class="logo">SUPERNOVA <span>STUDIOS</span></div>
-    <div class="user-stats">
-      <div class="stat-badge"><span class="stat-icon" aria-hidden="true">🔥</span> Racha: <strong id="streak-days">0</strong> días</div>
-      <div class="stat-badge"><span class="stat-icon" aria-hidden="true">🪙</span> Tokens: <strong id="user-tokens">0</strong></div>
-      <div class="stat-badge"><span class="stat-icon" aria-hidden="true">⭐</span> Estrellas: <strong id="user-stars">0</strong></div>
+  <!-- Barra Lateral de Navegación (Sidebar) -->
+  <aside class="sidebar-nav">
+    <div class="sidebar-logo">
+      SUPERNOVA <span>STUDIOS</span>
     </div>
-    <nav class="menu-container">
-      <label for="nav-dropdown" class="sr-only">Navegación principal</label>
-      <select id="nav-dropdown" onchange="switchTab(this.value)">
-        <option value="tutorial">📖 Tutorial / Guía de uso</option>
-        <option value="learn">🧠 Centro de aprendizaje</option>
-        <option value="games">🎮 Juegos</option>
-        <option value="about">ℹ️ Conócenos</option>
-        <option value="store">🛒 Marketplace</option>
-        <option value="profile">👤 Perfil e Inventario</option>
-      </select>
-    </nav>
-  </header>
 
-  <main>
-    <!-- 1. Tutorial / Guía de uso -->
-    <section id="tab-tutorial" class="tab-content active">
-      <h2>Tutorial y Guía de Uso</h2>
-      <p class="subtitle">Bienvenido a Supernova Studios. Explora los módulos educativos, participa en la comunidad y acumula tokens diarios.</p>
-
-      <!-- CALENDARIO DE RACHA MENSUAL INTEGRADO -->
-      <div class="calendar-header" style="margin-top: 20px;">
-        <h3>Calendario de Recompensas (<span id="calendar-month-name">Cargando mes...</span>)</h3>
-        <p>Inicia sesión diariamente para mantener tu racha activa y reclamar tokens acumulativos.</p>
+    <nav class="sidebar-menu">
+      <!-- Sección Inicio -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-title">🌟 Inicio</div>
+        <button type="button" id="sub-btn-conocenos" class="sidebar-btn active" onclick="switchTabWithSidebar('tab-conocenos', this)">
+          🚀 Conócenos
+        </button>
+        <button type="button" id="sub-btn-recompensas" class="sidebar-btn" onclick="switchTabWithSidebar('tab-recompensas', this)">
+          🎁 Recompensas
+        </button>
       </div>
-      <div id="monthly-calendar-grid" class="calendar-grid"></div>
+
+      <!-- Módulos Principales -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-title">📚 Estudio</div>
+        <button type="button" class="sidebar-btn" onclick="switchTabWithSidebar('tab-learn', this)">🧠 Aprendizaje</button>
+        <button type="button" class="sidebar-btn" onclick="switchTabWithSidebar('tab-store', this)">🛒 Marketplace</button>
+      </div>
+
+      <!-- Sección Perfil -->
+      <div class="sidebar-nav-group">
+        <div class="sidebar-group-title">👤 Cuenta</div>
+        <button type="button" id="sub-btn-perfil-config" class="sidebar-btn" onclick="switchTabWithSidebar('tab-perfil-config', this)">
+          ⚙️ Configuración
+        </button>
+        <button type="button" id="sub-btn-perfil-insignias" class="sidebar-btn" onclick="switchTabWithSidebar('tab-perfil-insignias', this)">
+          🏅 Insignias
+        </button>
+        <button type="button" id="sub-btn-perfil-inventario" class="sidebar-btn" onclick="switchTabWithSidebar('tab-perfil-inventario', this)">
+          🎒 Inventario
+        </button>
+      </div>
+    </nav>
+
+    <!-- Botones de Redes Sociales al pie de la barra lateral -->
+    <div class="sidebar-social-footer">
+      <a href="https://discord.gg/RN8NTY4r" target="_blank" rel="noopener noreferrer" class="btn-social-icon" title="Comunidad Discord">
+        <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor" aria-hidden="true"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+        Discord
+      </a>
+      <a href="https://www.youtube.com/@SuperNovaStudios-f9t" target="_blank" rel="noopener noreferrer" class="btn-social-icon" title="Canal de YouTube">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        YouTube
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content-area">
+    <!-- 1A. Inicio -> Conócenos -->
+    <section id="tab-conocenos" class="tab-content active">
+      <h2>Bienvenido a Supernova Studios</h2>
+      <p class="subtitle">Descubre nuestra misión, visión y únete a nuestra comunidad oficial.</p>
+
+      <!-- SECCIÓN CONÓCENOS -->
+      <div class="about-card about-card-container">
+        <p class="about-intro">
+          <strong>Supernova Studios</strong> es un ecosistema tecnológico diseñado para revolucionar el aprendizaje interactivo. Combinamos módulos teóricos estructurados y dinámicas de gamificación para formar una comunidad global de aprendizaje.
+        </p>
+
+        <!-- Tarjeta de Frase Filosófica -->
+        <div class="quote-card">
+          <blockquote class="quote-text">
+            “Pocas veces pensamos en lo que tenemos; pero siempre en lo que nos falta”
+          </blockquote>
+          <cite class="quote-author">— Arthur Schopenhauer</cite>
+        </div>
+
+        <div class="about-mv-grid">
+          <div class="mv-card">
+            <div class="mv-header">
+              <span class="mv-icon">🎯</span>
+              <h3 class="mv-title">Nuestra Misión</h3>
+            </div>
+            <p class="mv-desc">
+              Democratizar la educación técnica y práctica mediante la creación de herramientas digitales accesibles, verídicas e interactivas que potencien el talento autodidacta a nivel global.
+            </p>
+          </div>
+
+          <div class="mv-card">
+            <div class="mv-header">
+              <span class="mv-icon">🚀</span>
+              <h3 class="mv-title">Nuestra Visión (2030)</h3>
+            </div>
+            <p class="mv-desc">
+              Consolidarnos como la plataforma de referencia nacional en aprendizaje adaptativo, transformando la forma en que millones de personas adquieren habilidades clave.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Mascotas Oficiales (Lumin y Nova) -->
+        <div class="mascot-showcase-card">
+          <h3 class="mascot-section-title">Nuestros Guías en el Viaje</h3>
+          <p class="mascot-section-subtitle">Conoce a tus compañeros de aventura en cada lección interactiva.</p>
+          
+          <div class="mascot-image-container">
+            <img src="Mascotas.png" alt="Mascotas de Supernova Studios: Lumin y Nova" class="mascot-img">
+          </div>
+          
+          <div class="mascot-names-display">
+            <span class="mascot-badge">🦉 Lumin</span>
+            <span class="mascot-divider">&amp;</span>
+            <span class="mascot-badge">🐷 Nova</span>
+          </div>
+        </div>
+
+      </div>
     </section>
 
-    <!-- 2. Centro de Aprendizaje -->
+    <!-- 1B. Inicio -> Recompensas -->
+    <section id="tab-recompensas" class="tab-content">
+      <h2>Centro de Recompensas</h2>
+      <p class="subtitle">Mantén tu racha diaria y acumula tokens por tu tiempo de estudio en la plataforma.</p>
+
+      <!-- SISTEMA DE RECOMPENSAS DIARIAS -->
+      <div class="rewards-section-container">
+        
+        <!-- Caja 1: Recompensas Diarias -->
+        <div class="rewards-box">
+          <h3 class="rewards-box-title">Recompensas Diarias</h3>
+          <p class="rewards-box-subtitle">Inicia sesión a diario.</p>
+          
+          <div id="bing-rewards-grid" class="rewards-grid-layout">
+            <!-- Renderizado dinámico por JS -->
+          </div>
+        </div>
+
+        <!-- Caja 2: Recompensas por Tiempo de Navegación -->
+        <div class="rewards-box">
+          <div class="rewards-flex-header">
+            <h3 class="rewards-box-title" style="margin: 0;">Tiempo de Navegación</h3>
+            <span class="time-navigated-badge">
+              ⏱️ Navegado hoy: <span id="time-navigated-display">0m 0s</span>
+            </span>
+          </div>
+          <p class="rewards-box-subtitle">Gana recompensas navegando cierto tiempo.</p>
+          
+          <div id="time-rewards-grid" class="rewards-grid-layout">
+            <!-- Renderizado dinámico por JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. Centro de Aprendizaje (Matemáticas) -->
     <section id="tab-learn" class="tab-content">
       <h2>Centro de Aprendizaje</h2>
       <p class="subtitle">Selecciona una materia para acceder a módulos estructurados con teoría, ejemplos y evaluadores interactivos.</p>
@@ -189,14 +234,7 @@
         <label for="subject-dropdown">Materia: </label>
         <select id="subject-dropdown" onchange="handleSubjectChange(this.value)">
           <option value="">-- Selecciona una Materia --</option>
-          <option value="english">Inglés</option>
-          <option value="hr">Recursos Humanos</option>
-          <option value="biology">Biología (Próximamente)</option>
-          <option value="physics">Física (Próximamente)</option>
-          <option value="chemistry">Química (Próximamente)</option>
-          <option value="math">Matemáticas (Próximamente)</option>
-          <option value="spanish">Español (Próximamente)</option>
-          <option value="code">Programación (Próximamente)</option>
+          <option value="matematicas">Matemáticas</option>
         </select>
       </div>
 
@@ -204,28 +242,22 @@
         <p>Esta materia estará disponible muy pronto con contenidos interactivos.</p>
       </div>
 
-      <!-- Módulo de Inglés -->
-      <div id="english-module" class="learn-container" style="display:none;">
+      <!-- Módulo de Matemáticas -->
+      <div id="matematicas-module" class="learn-container" style="display:none;">
         <hr class="section-divider">
-        <h3>Módulo de Inglés</h3>
+        <h3>Módulo de Matemáticas</h3>
         <div class="level-buttons-grid">
-          <button type="button" class="btn-level active" onclick="selectEnglishLevel('PreA1')">Nivel Pre-A1</button>
-          <button type="button" class="btn-level" onclick="selectEnglishLevel('A1')">Nivel A1 (Principiante)</button>
-          <button type="button" class="btn-level" onclick="selectEnglishLevel('A2')">Nivel A2 (Básico)</button>
-          <button type="button" class="btn-level" onclick="selectEnglishLevel('B1')">Nivel B1 (Intermedio)</button>
-          <button type="button" class="btn-level disabled" disabled>Nivel B2 (Próximamente)</button>
-          <button type="button" class="btn-level disabled" disabled>Nivel C1 (Próximamente)</button>
-          <button type="button" class="btn-level disabled" disabled>Nivel C2 (Próximamente)</button>
+          <button type="button" class="btn-level active">Fundamentos y Aritmética</button>
         </div>
 
         <div id="topics-list-section" class="topics-section">
-          <h4 id="level-title">Temas Disponibles Nivel Pre-A1</h4>
+          <h4 id="level-title">Temas Disponibles: Fundamentos</h4>
           <div id="topics-grid" class="topics-grid"></div>
         </div>
 
         <div id="topic-loader" class="topic-loader" style="display:none;">
           <div class="spinner"></div>
-          <p>Cargando lección detallada y vocabulario...</p>
+          <p>Cargando lección detallada y ejercicios...</p>
         </div>
 
         <div id="topic-content-display" class="topic-display-card" style="display:none;">
@@ -233,105 +265,9 @@
           <article id="topic-article"></article>
         </div>
       </div>
-
-      <!-- Módulo de Recursos Humanos -->
-      <div id="hr-module" class="learn-container" style="display:none;">
-        <hr class="section-divider">
-        <h3>Módulo de Recursos Humanos</h3>
-        <div class="level-buttons-grid">
-          <button type="button" class="btn-level active" onclick="selectHRTopic('seleccion')">1. Selección de Candidatos</button>
-          <button type="button" class="btn-level" onclick="selectHRTopic('entrevista')">2. Entrevista Laboral</button>
-          <button type="button" class="btn-level" onclick="selectHRTopic('induccion')">3. Inducción de Personal</button>
-          <button type="button" class="btn-level" onclick="selectHRTopic('documentacion')">4. Doc. y Procesos Técnicos</button>
-          <button type="button" class="btn-level" onclick="selectHRTopic('nomina')">5. Nómina y Compensaciones</button>
-          <button type="button" class="btn-level" onclick="selectHRTopic('sst')">6. Seguridad y Salud en el Trabajo (SST)</button>
-        </div>
-
-        <div id="hr-topics-list-section" class="topics-section">
-          <h4 id="hr-level-title">Temas Disponibles Selección de Candidatos</h4>
-          <div id="hr-topics-grid" class="topics-grid"></div>
-        </div>
-
-        <div id="hr-topic-loader" class="topic-loader" style="display:none;">
-          <div class="spinner"></div>
-          <p>Cargando lección detallada...</p>
-        </div>
-
-        <div id="hr-topic-content-display" class="topic-display-card" style="display:none;">
-          <button type="button" class="btn-secondary" onclick="closeHRTopicDisplay()">Volver al temario</button>
-          <article id="hr-topic-article"></article>
-        </div>
-      </div>
     </section>
 
-    <!-- 3. Zona de Juegos -->
-    <section id="tab-games" class="tab-content">
-      <h2>Expediente 404 (Prototipo 3D)</h2>
-      <p class="subtitle">Usa las teclas <strong>WASD</strong> o las <strong>Flechas</strong> para mover al personaje.</p>
-      
-      <!-- Contenedor del Juego con Pantalla de Inicio y Botón Fullscreen -->
-      <div id="game-container" style="position: relative; width: 100%; max-width: 900px; height: 500px; margin: 20px auto; background: #0b0714; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #a855f7;">
-        
-        <!-- Pantalla previa / Botón de inicio para que no cargue de golpe -->
-        <div id="game-start-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(23,15,38,0.95) 0%, rgba(10,7,18,0.98) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; text-align: center; padding: 20px;">
-          <span style="font-size: 3.5rem; margin-bottom: 10px;">🎮</span>
-          <h3 style="color: #f97316; font-size: 1.6rem; margin-bottom: 8px; font-weight: 800;">Expediente 404 (3D)</h3>
-          <p style="color: #cbd5e1; font-size: 0.95rem; max-width: 400px; margin-bottom: 20px;">Explora el entorno 3D, interactúa con el clima y descubre los secretos del simulador.</p>
-          <button type="button" onclick="startTheGame()" style="background: linear-gradient(135deg, #f97316 0%, #a855f7 100%); color: #ffffff; border: none; padding: 14px 32px; font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 20px rgba(249, 115, 22, 0.5); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            Iniciar Juego 🚀
-          </button>
-        </div>
-
-        <!-- Botón de Pantalla Completa Flotante -->
-        <button type="button" id="fullscreen-game-btn" onclick="toggleGameFullscreen()" style="position: absolute; bottom: 15px; right: 15px; z-index: 10; background: rgba(23, 15, 38, 0.85); border: 1px solid #a855f7; color: #ffffff; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; backdrop-filter: blur(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.4);" title="Pantalla Completa">
-          ⛶ Pantalla Completa
-        </button>
-
-        <canvas id="game-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
-      </div>
-    </section>
-
-    <!-- 4. Conócenos -->
-    <section id="tab-about" class="tab-content">
-      <div class="about-card" style="max-width: 900px; margin: 0 auto;">
-        <h2 style="font-size: 2rem; margin-bottom: 8px;">Conócenos</h2>
-        <p class="about-intro" style="font-size: 1.05rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 30px;">
-          <strong>Supernova Studios</strong> es un ecosistema tecnológico diseñado para revolucionar el aprendizaje interactivo. Combinamos módulos teóricos estructurados, inteligencia artificial y dinámicas de gamificación para formar una comunidad global de aprendizaje.
-        </p>
-
-        <div class="about-mv-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 35px;">
-          <div class="mv-card" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
-            <div class="mv-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-              <span class="mv-icon" style="font-size: 1.8rem;">🎯</span>
-              <h3 style="font-size: 1.3rem; margin: 0; color: #f8fafc; font-weight: 700;">Nuestra Misión</h3>
-            </div>
-            <p style="font-size: 0.95rem; line-height: 1.6; color: #94a3b8; margin: 0;">
-              Democratizar la educación técnica y práctica mediante la creación de herramientas digitales accesibles, verídicas e interactivas que potencien el talento autodidacta a nivel global.
-            </p>
-          </div>
-
-          <div class="mv-card" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);">
-            <div class="mv-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-              <span class="mv-icon" style="font-size: 1.8rem;">🚀</span>
-              <h3 style="font-size: 1.3rem; margin: 0; color: #f8fafc; font-weight: 700;">Nuestra Visión (2030)</h3>
-            </div>
-            <p style="font-size: 0.95rem; line-height: 1.6; color: #94a3b8; margin: 0;">
-              Consolidarnos como la plataforma de referencia mundial en aprendizaje adaptativo impulsado por IA, transformando la forma en que millones de personas adquieren y certifican habilidades clave.
-            </p>
-          </div>
-        </div>
-
-        <div class="discord-box" style="background: linear-gradient(135deg, rgba(88, 101, 242, 0.15) 0%, rgba(64, 78, 237, 0.05) 100%); border: 1px solid rgba(88, 101, 242, 0.3); border-radius: 16px; padding: 28px 24px; text-align: center;">
-          <h3 style="font-size: 1.25rem; margin-top: 0; margin-bottom: 10px; color: #ffffff;">Comunidad Oficial</h3>
-          <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 20px;">Únete a nuestro servidor para resolver dudas, ver anuncios directos y colaborar con otros miembros.</p>
-          <a href="https://discord.gg/PF4DCfC2Ts" target="_blank" rel="noopener noreferrer" class="btn-discord" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #5865F2; color: #ffffff; padding: 12px 28px; border-radius: 10px; font-weight: 600; text-decoration: none;">
-            Unirse a Discord
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. Marketplace -->
+    <!-- 3. Marketplace -->
     <section id="tab-store" class="tab-content">
       <h2>Marketplace</h2>
       <p class="subtitle">Canjea tus recursos acumulados por ventajas exclusivas para tu cuenta.</p>
@@ -349,24 +285,17 @@
           <p>Trueque exclusivo de recursos para veteranos del conocimiento.</p>
           <button type="button" class="btn-primary" onclick="buyItem('star_chest_small', {stars: 5, tokens: 800})">Intercambiar (5 ⭐ por 800 🪙)</button>
         </div>
-
-        <div class="store-card">
-          <div class="store-icon" aria-hidden="true">🌟</div>
-          <h3>Amuleto Supremo del Inmortal</h3>
-          <p>El artefacto definitivo del evento de Halloween para tu inventario.</p>
-          <button type="button" class="btn-primary" onclick="buyItem('star_amulet_epic', {stars: 10, tokens: 2000})">Intercambiar (10 ⭐ por 2,000 🪙)</button>
-        </div>
       </div>
     </section>
 
-    <!-- 6. Perfil e Inventario -->
-    <section id="tab-profile" class="tab-content">
-      <h2>Mi Perfil e Inventario</h2>
-      <p class="subtitle">Gestiona tus datos personales y revisa tus objetos equipados.</p>
-      <div class="profile-layout-grid">
+    <!-- 4A. Perfil -> Configuración de Usuario -->
+    <section id="tab-perfil-config" class="tab-content">
+      <h2>Configuración de Usuario</h2>
+      <p class="subtitle">Gestiona tu apodo público, revisa tu cuenta vinculada y controla tu sesión.</p>
+      <div style="max-width: 580px; margin: 0 auto;">
         <div class="profile-card config-card">
           <div class="profile-card-header">
-            <h3>Configuración de Usuario</h3>
+            <h3>Datos de la Cuenta</h3>
             <button type="button" class="btn-logout-header" onclick="logout()" title="Cerrar Sesión">Cerrar Sesión</button>
           </div>
           <div class="form-group">
@@ -377,29 +306,81 @@
             <label for="user-email">Correo Electrónico (Privado): </label>
             <input type="email" id="user-email" readonly class="input-readonly" placeholder="correo@dominio.com">
           </div>
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="language-select">Idioma de la Plataforma: </label>
+            <select id="language-select" onchange="changeLanguage(this.value)">
+              <option value="es">Español</option>
+              <option value="en">English (Inglés)</option>
+            </select>
+          </div>
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: flex-end;">
+            <span id="app-version-badge" style="font-size: 0.75rem; color: var(--text-muted, #94a3b8); background: rgba(255, 255, 255, 0.05); padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.1); letter-spacing: 0.3px;">
+              Supernova Studios • Versión Beta
+            </span>
+          </div>
         </div>
+      </div>
+    </section>
 
+    <!-- 4B. Perfil -> Insignias -->
+    <section id="tab-perfil-insignias" class="tab-content">
+      <h2>Insignias y Emblemas</h2>
+      <p class="subtitle">Desbloquea logros por tu constancia y reclama recompensas adicionales.</p>
+      <div class="badges-section-wrapper">
         <div class="profile-card badges-card">
-          <h3>Insignias y Emblemas</h3>
+          <div class="badges-card-header">
+            <h3>Tus Logros</h3>
+            <div class="badges-filter-bar" role="group" aria-label="Filtrar insignias">
+              <button type="button" class="badge-filter-btn active" data-filter="all" onclick="setBadgeFilter('all')">
+                Todos (<span id="count-badges-all">0</span>)
+              </button>
+              <button type="button" class="badge-filter-btn" data-filter="earned" onclick="setBadgeFilter('earned')">
+                Ganados (<span id="count-badges-earned">0</span>)
+              </button>
+              <button type="button" class="badge-filter-btn" data-filter="incomplete" onclick="setBadgeFilter('incomplete')">
+                Incompletos (<span id="count-badges-incomplete">0</span>)
+              </button>
+            </div>
+          </div>
           <div id="user-badges-list" class="badges-grid"></div>
         </div>
+      </div>
+    </section>
 
+    <!-- 4C. Perfil -> Inventario -->
+    <section id="tab-perfil-inventario" class="tab-content">
+      <h2>Mi Inventario</h2>
+      <p class="subtitle">Revisa los artículos especiales y recursos acumulados en tu cuenta.</p>
+      <div style="max-width: 680px; margin: 0 auto;">
         <div class="profile-card inventory-card">
-          <h3>Mi Inventario</h3>
-          <p class="subtitle">Artículos activos en tu cuenta:</p>
+          <h3>Recursos y Artículos Activos</h3>
           <div id="user-inventory-grid" class="inventory-grid">
             <div class="inventory-item">
-              <span class="item-icon">🛡</span>
+              <span class="item-icon" aria-hidden="true">🔥</span>
               <div class="item-info">
-                <strong>Protector de Racha</strong>
-                <span id="shield-count-display">Cantidad: 0 / 3</span>
+                <strong>Racha Diaria</strong>
+                <span><strong id="streak-days">0</strong> días</span>
               </div>
             </div>
             <div class="inventory-item">
-              <span class="item-icon">⭐</span>
+              <span class="item-icon" aria-hidden="true">🪙</span>
+              <div class="item-info">
+                <strong>Tokens</strong>
+                <span>Cantidad: <strong id="user-tokens">0</strong></span>
+              </div>
+            </div>
+            <div class="inventory-item">
+              <span class="item-icon" aria-hidden="true">⭐</span>
               <div class="item-info">
                 <strong>Estrellas de Racha</strong>
-                <span id="stars-count-display">Cantidad: <strong id="user-stars-inv">0</strong></span>
+                <span id="stars-count-display">Cantidad: <strong id="user-stars">0</strong></span>
+              </div>
+            </div>
+            <div class="inventory-item">
+              <span class="item-icon" aria-hidden="true">🛡️</span>
+              <div class="item-info">
+                <strong>Protector de Racha</strong>
+                <span id="shield-count-display">Cantidad: 0 / 3</span>
               </div>
             </div>
           </div>
@@ -408,52 +389,51 @@
     </section>
   </main>
 
-  <!-- Script para controlar la carga diferida del juego y pantalla completa -->
-  <script>
-    function startTheGame() {
-      const overlay = document.getElementById('game-start-overlay');
-      if (overlay) overlay.style.display = 'none';
-      if (typeof initGameEngine === 'function') {
-        initGameEngine();
-      }
-    }
+  <!-- Scripts Modulares Principales -->
+  <script src="Matematicas/Matematicasbasica.js" defer></script>
+  <script src="Insignias.js" defer></script>
+  <script src="Marketplace.js" defer></script>
+  <script src="Recompensas.js" defer></script>
 
-    function toggleGameFullscreen() {
-      const container = document.getElementById('game-container');
-      if (!document.fullscreenElement) {
-        if (container.requestFullscreen) {
-          container.requestFullscreen();
-        } else if (container.webkitRequestFullscreen) {
-          container.webkitRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-  </script>
-
-  <!-- Scripts de Inglés -->
-  <script src="english/englishPreA1.js" defer></script>
-  <script src="english/englishA1.js" defer></script>
-  <script src="english/englishA2.js" defer></script>
-  <script src="english/englishB1.js" defer></script>
-
-  <!-- Scripts de Recursos Humanos -->
-  <script src="recursoshumanos/seleccion-candidatos.js" defer></script>
-  <script src="recursoshumanos/entrevista.js" defer></script>
-  <script src="recursoshumanos/induccion.js" defer></script>
-  <script src="recursoshumanos/documentacion-procesos-tecnicos.js" defer></script>
-  <script src="recursoshumanos/nomina.js" defer></script>
-  <script src="recursoshumanos/sg-seguridad-salud-trabajo.js" defer></script>
-
-  <!-- Script del Juego 3D -->
-  <script src="expediente404/expediente.js" defer></script>
-
-  <!-- Script Principal -->
+  <!-- Script Principal y de Navegación Lateral -->
   <script src="script.js" defer></script>
+  <script>
+    function switchTabWithSidebar(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+
+      document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      if (btnElement) {
+        btnElement.classList.add('active');
+      }
+    }
+
+    // Control de la Pantalla de Carga Estilo Duolingo (5 Segundos exactos + bloqueo total de scroll)
+    window.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+
+      setTimeout(() => {
+        const splashScreen = document.getElementById('intro-splash-screen');
+        if (splashScreen) {
+          splashScreen.classList.add('fade-out');
+          // Restaurar scroll y ocultar la pantalla una vez termine la animación suave
+          setTimeout(() => {
+            splashScreen.style.display = 'none';
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+          }, 800);
+        }
+      }, 5000); // 5000 milisegundos = 5 segundos exactos
+    });
+  </script>
 </body>
 </html>

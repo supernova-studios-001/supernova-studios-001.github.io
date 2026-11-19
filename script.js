@@ -1,42 +1,144 @@
 // ==========================================
-// CONFIGURACIÓN DE CONEXIÓN A SUPABASE Y GOOGLE OAUTH
+// CONFIGURACIÓN DE SUPABASE Y AUTENTICACIÓN
 // ==========================================
-const SUPABASE_URL = 'https://zqlyzkcpzaxgigkfwls.supabase.co';
-const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbGh6a2NwemF4Z21pZ2tmd2xzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MzAwNjEsImV4cCI6MjEwNTAwNjA2MX0.gb0z7WFuAbn6kxDni7vx3wczRMFLKUFuZyKx-wabcds';
+const SUPABASE_URL = 'https://wapczrprddrcakvowsox.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_zGXT9svqCACV-H7uGzOFOw_DxbSmpn3';
 
-// Inicialización del cliente de Supabase (requiere script CDN en HTML)
-const supabaseClient =
-  window.supabase && typeof window.supabase.createClient === 'function'
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
+// Inicializar cliente de Supabase de forma segura
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 const GOOGLE_CLIENT_ID =
   '695556528337-katrqu8atnal1d2j9ud3t9jpjhajjhgb.apps.googleusercontent.com';
 var ADMIN_EMAIL = 'correadediego30@gmail.com';
 
-// MAPA DE CONTENIDOS PARA RECURSOS HUMANOS
-const hrDataMapping = {
-  seleccion: typeof hrSeleccionData !== 'undefined' ? hrSeleccionData : {},
-  entrevista:
-    typeof hrEntrevistaData !== 'undefined'
-      ? hrEntrevistaData
-      : typeof entrevistaData !== 'undefined'
-      ? entrevistaData
-      : {},
-  induccion: typeof hrInduccionData !== 'undefined' ? hrInduccionData : {},
-  documentacion:
-    typeof hrDocumentacionData !== 'undefined' ? hrDocumentacionData : {},
-  nomina: typeof hrNominaData !== 'undefined' ? hrNominaData : {},
-  sst: typeof hrSSTData !== 'undefined' ? hrSSTData : {}
-};
-
 // ESTADO GLOBAL
 let currentUser = localStorage.getItem('username') || '';
 let currentUserEmail = localStorage.getItem('user_email') || ADMIN_EMAIL;
-let currentEnglishLevel = 'B1';
-let currentHRTopic = 'seleccion';
-let currentSubject = 'english';
+let currentEnglishLevel = 'PreA1';
+let currentSubject = 'matematicas';
+let currentLanguage = localStorage.getItem('app_language') || 'es';
+
+// ==========================================
+// DICCIONARIO DE TRADUCCIONES (I18N) COMPLETO
+// ==========================================
+const TRANSLATIONS = {
+  es: {
+    nav_conocenos: "🚀 Conócenos",
+    nav_recompensas: "🎁 Recompensas",
+    nav_aprendizaje: "🧠 Aprendizaje",
+    nav_marketplace: "🛒 Marketplace",
+    nav_configuracion: "⚙️ Configuración",
+    nav_insignias: "🏅 Insignias",
+    nav_inventario: "🎒 Inventario",
+    group_inicio: "🌟 Inicio",
+    group_estudio: "📚 Estudio",
+    group_cuenta: "👤 Cuenta",
+    welcome_title: "Bienvenido a Supernova Studios",
+    welcome_subtitle: "Descubre nuestra misión, visión y únete a nuestra comunidad oficial.",
+    mision_title: "Nuestra Misión",
+    mision_desc: "Democratizar la educación técnica y práctica mediante la creación de herramientas digitales accesibles, verídicas e interactivas que potencien el talento autodidacta a nivel global.",
+    vision_title: "Nuestra Visión (2030)",
+    vision_desc: "Consolidarnos como la plataforma de referencia nacional en aprendizaje adaptativo, transformando la forma en que millones de personas adquieren habilidades clave.",
+    discord_title: "Comunidad Oficial",
+    discord_text: "Únete a nuestro servidor para resolver dudas, ver anuncios directos y colaborar con otros miembros.",
+    discord_btn: "Unirse a Discord",
+    rewards_title: "Centro de Recompensas",
+    rewards_subtitle: "Mantén tu racha diaria y acumula tokens por tu tiempo de estudio en la plataforma.",
+    box_daily_title: "Recompensas Diarias",
+    box_daily_sub: "Inicia sesión a diario.",
+    box_time_title: "Tiempo de Navegación",
+    box_time_sub: "Gana recompensas navegando cierto tiempo.",
+    learn_title: "Centro de Aprendizaje",
+    learn_subtitle: "Selecciona una materia para acceder a módulos estructurados con teoría, ejemplos y evaluadores interactivos.",
+    subject_label: "Materia: ",
+    subject_default: "-- Selecciona una Materia --",
+    subject_math: "Matemáticas",
+    store_title: "Marketplace",
+    store_subtitle: "Canjea tus recursos acumulados por ventajas exclusivas para tu cuenta.",
+    item1_title: "Protector de Racha",
+    item1_desc: "Evita perder tu racha diaria si olvidas ingresar un día. (Máximo 3 acumulables).",
+    item1_btn: "Comprar (3,000 Tokens 🪙)",
+    item2_title: "Cofre Estelar Menor",
+    item2_desc: "Trueque exclusivo de recursos para veteranos del conocimiento.",
+    item2_btn: "Intercambiar (5 ⭐ por 800 🪙)",
+    config_title: "Configuración de Usuario",
+    config_subtitle: "Gestiona tu apodo público, revisa tu cuenta vinculada y controla tu sesión.",
+    account_data_title: "Datos de la Cuenta",
+    logout_btn: "Cerrar Sesión",
+    label_username: "Nombre de usuario (Público): ",
+    label_email: "Correo Electrónico (Privado): ",
+    label_lang: "Idioma de la Plataforma: ",
+    version_badge: "Supernova Studios • Versión Beta",
+    badges_title: "Insignias y Emblemas",
+    badges_subtitle: "Desbloquea logros por tu constancia y reclama recompensas adicionales.",
+    badges_card_title: "Tus Logros",
+    inventory_title: "Mi Inventario",
+    inventory_subtitle: "Revisa los artículos especiales y recursos acumulados en tu cuenta.",
+    inventory_card_title: "Recursos y Artículos Activos",
+    inv_streak: "Racha Diaria",
+    inv_tokens: "Tokens",
+    inv_stars: "Estrellas de Racha",
+    inv_shield: "Protector de Racha"
+  },
+  en: {
+    nav_conocenos: "🚀 About Us",
+    nav_recompensas: "🎁 Rewards",
+    nav_aprendizaje: "🧠 Learning",
+    nav_marketplace: "🛒 Marketplace",
+    nav_configuracion: "⚙️ Settings",
+    nav_insignias: "🏅 Badges",
+    nav_inventario: "🎒 Inventory",
+    group_inicio: "🌟 Home",
+    group_estudio: "📚 Study",
+    group_cuenta: "👤 Account",
+    welcome_title: "Welcome to Supernova Studios",
+    welcome_subtitle: "Discover our mission, vision and join our official community.",
+    mision_title: "Our Mission",
+    mision_desc: "Democratize technical and practical education by creating accessible, truthful, and interactive digital tools that empower self-taught talent globally.",
+    vision_title: "Our Vision (2030)",
+    vision_desc: "Establish ourselves as the national benchmark platform in adaptive learning, transforming how millions of people acquire key skills.",
+    discord_title: "Official Community",
+    discord_text: "Join our server to solve doubts, see direct announcements, and collaborate with other members.",
+    discord_btn: "Join Discord",
+    rewards_title: "Rewards Center",
+    rewards_subtitle: "Maintain your daily streak and accumulate tokens for your study time on the platform.",
+    box_daily_title: "Daily Rewards",
+    box_daily_sub: "Log in daily.",
+    box_time_title: "Browsing Time",
+    box_time_sub: "Earn rewards by browsing for a certain time.",
+    learn_title: "Learning Center",
+    learn_subtitle: "Select a subject to access structured modules with theory, examples, and interactive evaluators.",
+    subject_label: "Subject: ",
+    subject_default: "-- Select a Subject --",
+    subject_math: "Mathematics",
+    store_title: "Marketplace",
+    store_subtitle: "Redeem your accumulated resources for exclusive advantages for your account.",
+    item1_title: "Streak Shield",
+    item1_desc: "Avoid losing your daily streak if you forget to log in for a day. (Maximum 3 accumulable).",
+    item1_btn: "Buy (3,000 Tokens 🪙)",
+    item2_title: "Minor Star Chest",
+    item2_desc: "Exclusive resource trade for knowledge veterans.",
+    item2_btn: "Exchange (5 ⭐ for 800 🪙)",
+    config_title: "User Settings",
+    config_subtitle: "Manage your public nickname, check your linked account, and control your session.",
+    account_data_title: "Account Data",
+    logout_btn: "Log Out",
+    label_username: "Username (Public): ",
+    label_email: "Email (Private): ",
+    label_lang: "Platform Language: ",
+    version_badge: "Supernova Studios • Beta Version",
+    badges_title: "Badges and Emblems",
+    badges_subtitle: "Unlock achievements for your consistency and claim additional rewards.",
+    badges_card_title: "Your Achievements",
+    inventory_title: "My Inventory",
+    inventory_subtitle: "Check special items and accumulated resources in your account.",
+    inventory_card_title: "Resources and Active Items",
+    inv_streak: "Daily Streak",
+    inv_tokens: "Tokens",
+    inv_stars: "Streak Stars",
+    inv_shield: "Streak Shield"
+  }
+};
 
 // ==========================================
 // FUNCIONES DE UTILIDAD Y SEGURIDAD
@@ -51,129 +153,292 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
-function sanitizeURL(url) {
-  if (!url) return '#';
-  const clean = String(url).trim();
-  if (clean.startsWith('http://') || clean.startsWith('https://')) {
-    return escapeHTML(clean);
-  }
-  return '#';
-}
-
 function generateDefaultUsername() {
   const randomId = Math.floor(1000 + Math.random() * 9000);
   return `Usuario_${randomId}`;
 }
 
-function isUserAdmin(email, name) {
-  return (
-    email === ADMIN_EMAIL || name === 'AdminSuperNova' || name === 'Admin'
-  );
-}
-
 // ==========================================
-// CONEXIÓN CON SUPABASE (PERSISTENCIA Y SINCRONIZACIÓN REMOTA)
+// SINCRONIZACIÓN SEGURA CON SUPABASE (NUBE)
 // ==========================================
 async function syncUserDataWithDB(userData) {
   try {
-    if (!supabaseClient) {
-      console.warn('Supabase JS Client no disponible. Modo local activado.');
-      updateUIStats();
-      return;
-    }
+    if (!supabaseClient || !currentUserEmail) return;
 
-    const {
-      data: { user }
-    } = await supabaseClient.auth.getUser();
-
+    // 1. Preparar datos a actualizar en la nube
     const payload = {
-      username: userData.username || currentUser,
-      email: userData.email || currentUserEmail,
-      streak: parseInt(localStorage.getItem('user_streak') || '0', 10),
-      tokens: parseInt(localStorage.getItem('user_tokens') || '0', 10),
-      stars: parseInt(localStorage.getItem('user_stars') || '0', 10),
-      shield_count: parseInt(localStorage.getItem('shield_count') || '0', 10),
-      last_login_date:
-        localStorage.getItem('last_login_date') ||
-        new Date().toISOString().split('T')[0]
+      email: currentUserEmail,
+      username: currentUser,
+      updated_at: new Date().toISOString()
     };
 
-    if (user) {
-      payload.id = user.id; // Vinculación UUID con Supabase Auth
-    }
+    if (userData.streak !== undefined) payload.streak = userData.streak;
+    if (userData.tokens !== undefined) payload.tokens = userData.tokens;
+    if (userData.stars !== undefined) payload.stars = userData.stars;
+    if (userData.shield_count !== undefined) payload.shield_count = userData.shield_count;
+    if (userData.weekly_reward_day !== undefined) payload.weekly_reward_day = userData.weekly_reward_day;
+    if (userData.claimed_daily_days !== undefined) payload.claimed_daily_days = userData.claimed_daily_days;
+    if (userData.last_claim_date !== undefined) payload.last_claim_date = userData.last_claim_date;
+    if (userData.last_login_date !== undefined) payload.last_login_date = userData.last_login_date;
 
-    const { data, error } = await supabaseClient
-      .from('user_profiles')
+    // 2. Guardar localmente como respaldo rápido
+    if (userData.streak !== undefined) localStorage.setItem('user_streak', userData.streak.toString());
+    if (userData.tokens !== undefined) localStorage.setItem('user_tokens', userData.tokens.toString());
+    if (userData.stars !== undefined) localStorage.setItem('user_stars', userData.stars.toString());
+    if (userData.shield_count !== undefined) localStorage.setItem('shield_count', userData.shield_count.toString());
+
+    // 3. Enviar a Supabase (Upsert basado en el correo electrónico)
+    const { error } = await supabaseClient
+      .from('profiles')
       .upsert(payload, { onConflict: 'email' });
 
     if (error) {
-      console.error('Error al sincronizar datos en Supabase:', error.message);
+      console.warn('Error sincronizando con Supabase:', error.message);
     } else {
-      console.log('Datos sincronizados correctamente con Supabase.');
+      console.log('Datos sincronizados en la nube (Supabase) con éxito.');
     }
+
     updateUIStats();
   } catch (err) {
-    console.warn('Modo offline / Error de conexión con Supabase:', err);
+    console.error('Excepción en syncUserDataWithDB:', err);
+  }
+}
+
+async function fetchUserDataFromDB(email) {
+  try {
+    if (!supabaseClient || !email) return null;
+
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Error obteniendo perfil de Supabase:', error.message);
+      return null;
+    }
+
+    if (data) {
+      // Cargar datos al navegador
+      localStorage.setItem('username', data.username || currentUser);
+      localStorage.setItem('user_email', data.email);
+      localStorage.setItem('user_streak', (data.streak || 0).toString());
+      localStorage.setItem('user_tokens', (data.tokens || 0).toString());
+      localStorage.setItem('user_stars', (data.stars || 0).toString());
+      localStorage.setItem('shield_count', (data.shield_count || 0).toString());
+      localStorage.setItem('weekly_reward_day', (data.weekly_reward_day || 1).toString());
+      localStorage.setItem('claimed_daily_days', JSON.stringify(data.claimed_daily_days || []));
+      if (data.last_claim_date) localStorage.setItem('last_claim_date', data.last_claim_date);
+      if (data.last_login_date) localStorage.setItem('last_login_date', data.last_login_date);
+
+      currentUser = data.username || currentUser;
+      updateUIStats();
+    }
+    return data;
+  } catch (err) {
+    console.error('Excepción al consultar Supabase:', err);
+    return null;
   }
 }
 
 // ==========================================
-// CONTADOR REGRESIVO DEL EVENTO DE HALLOWEEN
+// GESTIÓN DE IDIOMA (I18N)
 // ==========================================
-function initEventModal() {
-  const timerElem = document.getElementById('collab-timer');
-  if (!timerElem) return;
+function changeLanguage(lang) {
+  if (lang !== 'es' && lang !== 'en') return;
+  currentLanguage = lang;
+  localStorage.setItem('app_language', lang);
+  
+  const langSelect = document.getElementById('language-select');
+  if (langSelect) langSelect.value = lang;
 
-  // Fecha límite: 5 de Noviembre a las 23:59:59
-  const targetDate = new Date('2026-11-05T23:59:59').getTime();
+  applyLanguageTexts();
+  console.log(`Idioma cambiado a: ${lang}`);
+}
 
-  function updateTimer() {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
+function applyLanguageTexts() {
+  const t = TRANSLATIONS[currentLanguage];
+  if (!t) return;
 
-    if (distance < 0) {
-      timerElem.innerText = "¡El evento ha finalizado!";
-      return;
-    }
+  const btnConocenos = document.getElementById('sub-btn-conocenos');
+  const btnRecompensas = document.getElementById('sub-btn-recompensas');
+  const btnAprendizaje = document.querySelector('[onclick*="tab-learn"]');
+  const btnMarketplace = document.querySelector('[onclick*="tab-store"]');
+  const btnConfig = document.getElementById('sub-btn-perfil-config');
+  const btnInsignias = document.getElementById('sub-btn-perfil-insignias');
+  const btnInventario = document.getElementById('sub-btn-perfil-inventario');
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  if (btnConocenos) btnConocenos.textContent = t.nav_conocenos;
+  if (btnRecompensas) btnRecompensas.textContent = t.nav_recompensas;
+  if (btnAprendizaje) btnAprendizaje.textContent = t.nav_aprendizaje;
+  if (btnMarketplace) btnMarketplace.textContent = t.nav_marketplace;
+  if (btnConfig) btnConfig.textContent = t.nav_configuracion;
+  if (btnInsignias) btnInsignias.textContent = t.nav_insignias;
+  if (btnInventario) btnInventario.textContent = t.nav_inventario;
 
-    timerElem.innerText = `El evento termina en: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+  const groupTitles = document.querySelectorAll('.sidebar-group-title');
+  if (groupTitles.length >= 3) {
+    groupTitles[0].textContent = t.group_inicio;
+    groupTitles[1].textContent = t.group_estudio;
+    groupTitles[2].textContent = t.group_cuenta;
   }
 
-  updateTimer();
-  setInterval(updateTimer, 1000);
+  const tabConocenos = document.querySelector('#tab-conocenos h2');
+  const tabConocenosSub = document.querySelector('#tab-conocenos .subtitle');
+  if (tabConocenos) tabConocenos.textContent = t.welcome_title;
+  if (tabConocenosSub) tabConocenosSub.textContent = t.welcome_subtitle;
+
+  const misionTitle = document.querySelector('.mv-card:nth-child(1) .mv-title');
+  const misionDesc = document.querySelector('.mv-card:nth-child(1) .mv-desc');
+  const visionTitle = document.querySelector('.mv-card:nth-child(2) .mv-title');
+  const visionDesc = document.querySelector('.mv-card:nth-child(2) .mv-desc');
+  if (misionTitle) misionTitle.textContent = t.mision_title;
+  if (misionDesc) misionDesc.textContent = t.mision_desc;
+  if (visionTitle) visionTitle.textContent = t.vision_title;
+  if (visionDesc) visionDesc.textContent = t.vision_desc;
+
+  const discordTitle = document.querySelector('.discord-title');
+  const discordText = document.querySelector('.discord-text');
+  const discordBtn = document.querySelector('.btn-discord');
+  if (discordTitle) discordTitle.textContent = t.discord_title;
+  if (discordText) discordText.textContent = t.discord_text;
+  if (discordBtn) {
+    const svgHTML = discordBtn.querySelector('svg')?.outerHTML || '';
+    discordBtn.innerHTML = svgHTML + ' ' + t.discord_btn;
+  }
+
+  const tabRecom = document.querySelector('#tab-recompensas h2');
+  const tabRecomSub = document.querySelector('#tab-recompensas .subtitle');
+  if (tabRecom) tabRecom.textContent = t.rewards_title;
+  if (tabRecomSub) tabRecomSub.textContent = t.rewards_subtitle;
+
+  const rewardsBoxes = document.querySelectorAll('#tab-recompensas .rewards-box');
+  if (rewardsBoxes.length >= 2) {
+    const box1Title = rewardsBoxes[0].querySelector('.rewards-box-title');
+    const box1Sub = rewardsBoxes[0].querySelector('.rewards-box-subtitle');
+    if (box1Title) box1Title.textContent = t.box_daily_title;
+    if (box1Sub) box1Sub.textContent = t.box_daily_sub;
+
+    const box2Title = rewardsBoxes[1].querySelector('.rewards-box-title');
+    const box2Sub = rewardsBoxes[1].querySelector('.rewards-box-subtitle');
+    if (box2Title) box2Title.textContent = t.box_time_title;
+    if (box2Sub) box2Sub.textContent = t.box_time_sub;
+  }
+
+  const tabLearn = document.querySelector('#tab-learn h2');
+  const tabLearnSub = document.querySelector('#tab-learn .subtitle');
+  if (tabLearn) tabLearn.textContent = t.learn_title;
+  if (tabLearnSub) tabLearnSub.textContent = t.learn_subtitle;
+
+  const subjectLabel = document.querySelector('.subject-selection label');
+  const optDefault = document.querySelector('#subject-dropdown option[value=""]');
+  const optMath = document.querySelector('#subject-dropdown option[value="matematicas"]');
+  if (subjectLabel) subjectLabel.textContent = t.subject_label;
+  if (optDefault) optDefault.textContent = t.subject_default;
+  if (optMath) optMath.textContent = t.subject_math;
+
+  const tabStore = document.querySelector('#tab-store h2');
+  const tabStoreSub = document.querySelector('#tab-store .subtitle');
+  if (tabStore) tabStore.textContent = t.store_title;
+  if (tabStoreSub) tabStoreSub.textContent = t.store_subtitle;
+
+  const storeCards = document.querySelectorAll('.store-card');
+  if (storeCards.length >= 2) {
+    storeCards[0].querySelector('h3').textContent = t.item1_title;
+    storeCards[0].querySelector('p').textContent = t.item1_desc;
+    storeCards[0].querySelector('.btn-primary').textContent = t.item1_btn;
+
+    storeCards[1].querySelector('h3').textContent = t.item2_title;
+    storeCards[1].querySelector('p').textContent = t.item2_desc;
+    storeCards[1].querySelector('.btn-primary').textContent = t.item2_btn;
+  }
+
+  const tabConfig = document.querySelector('#tab-perfil-config h2');
+  const tabConfigSub = document.querySelector('#tab-perfil-config .subtitle');
+  if (tabConfig) tabConfig.textContent = t.config_title;
+  if (tabConfigSub) tabConfigSub.textContent = t.config_subtitle;
+
+  const accountCardTitle = document.querySelector('.config-card h3');
+  const logoutBtn = document.querySelector('.btn-logout-header');
+  if (accountCardTitle) accountCardTitle.textContent = t.account_data_title;
+  if (logoutBtn) logoutBtn.textContent = t.logout_btn;
+
+  const labels = document.querySelectorAll('.config-card .form-group label');
+  if (labels.length >= 3) {
+    labels[0].textContent = t.label_username;
+    labels[1].textContent = t.label_email;
+    labels[2].textContent = t.label_lang;
+  }
+
+  const versionBadge = document.getElementById('app-version-badge');
+  if (versionBadge) versionBadge.textContent = t.version_badge;
+
+  const tabBadges = document.querySelector('#tab-perfil-insignias h2');
+  const tabBadgesSub = document.querySelector('#tab-perfil-insignias .subtitle');
+  if (tabBadges) tabBadges.textContent = t.badges_title;
+  if (tabBadgesSub) tabBadgesSub.textContent = t.badges_subtitle;
+
+  const badgesCardTitle = document.querySelector('.badges-card h3');
+  if (badgesCardTitle) badgesCardTitle.textContent = t.badges_card_title;
+
+  const tabInv = document.querySelector('#tab-perfil-inventario h2');
+  const tabInvSub = document.querySelector('#tab-perfil-inventario .subtitle');
+  if (tabInv) tabInv.textContent = t.inventory_title;
+  if (tabInvSub) tabInvSub.textContent = t.inventory_subtitle;
+
+  const invCardTitle = document.querySelector('.inventory-card h3');
+  if (invCardTitle) invCardTitle.textContent = t.inventory_card_title;
+
+  const invItems = document.querySelectorAll('.inventory-item');
+  if (invItems.length >= 4) {
+    invItems[0].querySelector('.item-info strong').textContent = t.inv_streak;
+    invItems[1].querySelector('.item-info strong').textContent = t.inv_tokens;
+    invItems[2].querySelector('.item-info strong').textContent = t.inv_stars;
+    invItems[3].querySelector('.item-info strong').textContent = t.inv_shield;
+  }
 }
 
 // ==========================================
 // INICIALIZACIÓN DEL DOCUMENTO (DOM READY)
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log('Script de Supernova Studios inicializado.');
   const welcomeScreen = document.getElementById('welcome-screen');
   const usernameInput = document.getElementById('username');
   const userEmailInput = document.getElementById('user-email');
+  const langSelect = document.getElementById('language-select');
+
+  if (langSelect) {
+    langSelect.value = currentLanguage;
+  }
+  applyLanguageTexts();
 
   if (!currentUser) {
     currentUser = generateDefaultUsername();
     localStorage.setItem('username', currentUser);
   }
 
-  if (localStorage.getItem('user_logged_in') === 'true' && currentUser) {
-    if (welcomeScreen) welcomeScreen.style.display = 'none';
-    if (usernameInput) usernameInput.value = currentUser;
+  if (localStorage.getItem('user_logged_in') === 'true' && currentUserEmail) {
+    if (welcomeScreen) {
+      welcomeScreen.classList.add('hidden-screen');
+      welcomeScreen.style.display = 'none';
+    }
+    // Sincronizar datos frescos desde Supabase
+    await fetchUserDataFromDB(currentUserEmail);
+
+    if (usernameInput) usernameInput.value = localStorage.getItem('username') || currentUser;
     if (userEmailInput) userEmailInput.value = currentUserEmail;
-    calculateDailyStreak();
+    if (typeof calculateDailyStreak === 'function') calculateDailyStreak();
   } else {
-    if (welcomeScreen) welcomeScreen.style.display = 'flex';
+    if (welcomeScreen) {
+      welcomeScreen.classList.remove('hidden-screen');
+      welcomeScreen.style.display = 'flex';
+    }
   }
 
   initGoogleSignIn();
   updateUIStats();
-  initEventModal();
 });
 
 // ==========================================
@@ -202,7 +467,7 @@ function initGoogleSignIn() {
   }
 }
 
-function handleGoogleCredentialResponse(response) {
+async function handleGoogleCredentialResponse(response) {
   try {
     const base64Url = response.credential.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -215,41 +480,54 @@ function handleGoogleCredentialResponse(response) {
     const payload = JSON.parse(jsonPayload);
     const googleUserName = payload.name || generateDefaultUsername();
     const email = payload.email || ADMIN_EMAIL;
-    completeLogin(googleUserName, email, response.credential);
+    await completeLogin(googleUserName, email);
   } catch (e) {
     console.error('Error procesando credenciales de Google:', e);
-    completeLogin(generateDefaultUsername(), ADMIN_EMAIL);
+    await completeLogin(generateDefaultUsername(), ADMIN_EMAIL);
   }
 }
 
-function loginManual() {
+async function loginManual() {
   const input = document.getElementById('manual-user-input');
   const val = input ? input.value.trim() : '';
   const assignedUser = val ? val : generateDefaultUsername();
-  completeLogin(assignedUser, ADMIN_EMAIL);
+  const email = val && val.includes('@') ? val : ADMIN_EMAIL;
+  await completeLogin(assignedUser, email);
 }
 
-function completeLogin(name, email, idToken = null) {
+async function completeLogin(name, email) {
   currentUser = name;
   currentUserEmail = email || ADMIN_EMAIL;
   localStorage.setItem('username', currentUser);
   localStorage.setItem('user_email', currentUserEmail);
   localStorage.setItem('user_logged_in', 'true');
 
+  // Buscar si ya existe en Supabase
+  const existingUser = await fetchUserDataFromDB(currentUserEmail);
+  if (!existingUser) {
+    // Si es nuevo usuario, crear registro inicial en la nube
+    await syncUserDataWithDB({
+      username: currentUser,
+      email: currentUserEmail,
+      streak: 1,
+      tokens: 0,
+      stars: 0,
+      shield_count: 0
+    });
+  }
+
   const usernameInput = document.getElementById('username');
   const userEmailInput = document.getElementById('user-email');
   const welcomeScreen = document.getElementById('welcome-screen');
 
-  if (usernameInput) usernameInput.value = currentUser;
+  if (usernameInput) usernameInput.value = localStorage.getItem('username') || currentUser;
   if (userEmailInput) userEmailInput.value = currentUserEmail;
-  if (welcomeScreen) welcomeScreen.style.display = 'none';
+  if (welcomeScreen) {
+    welcomeScreen.classList.add('hidden-screen');
+    welcomeScreen.style.display = 'none';
+  }
 
-  calculateDailyStreak();
-  syncUserDataWithDB({
-    username: currentUser,
-    email: currentUserEmail,
-    id_token: idToken
-  });
+  if (typeof calculateDailyStreak === 'function') calculateDailyStreak();
 }
 
 function saveUsername(val) {
@@ -293,64 +571,8 @@ function switchTab(tabId) {
 }
 
 // ==========================================
-// ESTADÍSTICAS Y CALENDARIO MENSUAL DE RACHA (CON HALLOWEEN 1.5x)
+// FUNCIONES AUXILIARES GLOBALES DE ESTADÍSTICAS
 // ==========================================
-function calculateDailyStreak() {
-  let streak = parseInt(localStorage.getItem('user_streak') || '0', 10);
-  let tokens = parseInt(localStorage.getItem('user_tokens') || '0', 10);
-  let stars = parseInt(localStorage.getItem('user_stars') || '0', 10);
-  let shieldCount = parseInt(localStorage.getItem('shield_count') || '0', 10);
-  let lastLoginDate = localStorage.getItem('last_login_date');
-
-  const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
-
-  // Comprobar si el evento de Halloween está activo (antes del 5 de Noviembre de 2026)
-  const isHalloweenActive = now.getTime() < new Date('2026-11-05T23:59:59').getTime();
-
-  if (!lastLoginDate) {
-    streak = 1;
-    let baseReward = 20;
-    let finalReward = isHalloweenActive ? Math.floor(baseReward * 1.5) : baseReward;
-    tokens += finalReward;
-    localStorage.setItem('last_login_date', todayStr);
-  } else if (lastLoginDate !== todayStr) {
-    const dLast = new Date(lastLoginDate + 'T00:00:00Z');
-    const dToday = new Date(todayStr + 'T00:00:00Z');
-    const diffDays = Math.round((dToday - dLast) / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 1) {
-      streak += 1;
-      let baseReward = Math.min(20 + (streak - 1) * 10, 250);
-      if (streak % 7 === 0) {
-        baseReward += 50;
-        stars += 1;
-      }
-      // Aplicar multiplicador 1.5x durante Halloween
-      let finalReward = isHalloweenActive ? Math.floor(baseReward * 1.5) : baseReward;
-      tokens += finalReward;
-    } else if (diffDays > 1) {
-      if (shieldCount > 0) {
-        shieldCount -= 1;
-        localStorage.setItem('shield_count', shieldCount.toString());
-        console.log('¡Protector de racha activado! La racha no se perdió.');
-      } else {
-        streak = 1;
-        let baseReward = 20;
-        let finalReward = isHalloweenActive ? Math.floor(baseReward * 1.5) : baseReward;
-        tokens += finalReward;
-      }
-    }
-    localStorage.setItem('last_login_date', todayStr);
-  }
-
-  localStorage.setItem('user_streak', streak.toString());
-  localStorage.setItem('user_tokens', tokens.toString());
-  localStorage.setItem('user_stars', stars.toString());
-  syncUserDataWithDB({ streak, tokens, stars, shield_count: shieldCount });
-  renderMonthlyCalendar();
-}
-
 function updateUIStats() {
   let streak = localStorage.getItem('user_streak') || '0';
   let tokens = localStorage.getItem('user_tokens') || '0';
@@ -360,633 +582,10 @@ function updateUIStats() {
   const streakElem = document.getElementById('streak-days');
   const tokensElem = document.getElementById('user-tokens');
   const starsElem = document.getElementById('user-stars');
-  const starsInvElem = document.getElementById('user-stars-inv');
   const shieldDisplay = document.getElementById('shield-count-display');
 
   if (streakElem) streakElem.innerText = streak;
   if (tokensElem) tokensElem.innerText = parseInt(tokens, 10).toLocaleString();
   if (starsElem) starsElem.innerText = stars;
-  if (starsInvElem) starsInvElem.innerText = stars;
   if (shieldDisplay) shieldDisplay.innerText = `Cantidad: ${shields} / 3`;
 }
-
-function renderMonthlyCalendar() {
-  const gridContainer = document.getElementById('monthly-calendar-grid');
-  const monthTitle = document.getElementById('calendar-month-name');
-  if (!gridContainer) return;
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const todayDay = now.getDate();
-  const monthNames = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-
-  if (monthTitle) monthTitle.innerText = `${monthNames[month]} ${year}`;
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const userStreak = parseInt(localStorage.getItem('user_streak') || '1', 10);
-  const startClaimedDay = Math.max(1, todayDay - userStreak + 1);
-
-  // Comprobar si el evento de Halloween está activo para reflejarlo en el calendario
-  const isHalloweenActive = now.getTime() < new Date('2026-11-05T23:59:59').getTime();
-
-  let htmlBuffer = '';
-  for (let day = 1; day <= daysInMonth; day++) {
-    let baseReward = Math.min(20 + (day - 1) * 10, 250);
-    let icon = '';
-    let extraClass = '';
-
-    if (day % 7 === 0) {
-      baseReward += 50;
-      icon = '⭐';
-      extraClass += ' milestone';
-    }
-
-    // Aplicar el multiplicador 1.5x en el texto del calendario si Halloween está activo
-    let reward = isHalloweenActive ? Math.floor(baseReward * 1.5) : baseReward;
-
-    if (day >= startClaimedDay && day <= todayDay) {
-      extraClass += ' claimed';
-      icon = '✔';
-    } else if (day < todayDay) {
-      extraClass += ' missed';
-      icon = '❌';
-    }
-
-    if (day === todayDay) {
-      extraClass += ' today';
-    }
-
-    htmlBuffer += `
-      <div class="calendar-card ${extraClass.trim()}">
-        <span class="day-number">Día ${day}</span>
-        <span class="reward-icon">${icon}</span>
-        <span class="reward-tokens">+${reward} Tokens</span>
-      </div>`;
-  }
-  gridContainer.innerHTML = htmlBuffer;
-}
-
-// ==========================================
-// CENTRO DE APRENDIZAJE Y MATERIAS
-// ==========================================
-function handleSubjectChange(subject) {
-  currentSubject = subject;
-  const englishMod = document.getElementById('english-module');
-  const hrMod = document.getElementById('hr-module');
-  const comingSoon = document.getElementById('subject-coming-soon');
-
-  closeTopicDisplay();
-  closeHRTopicDisplay();
-
-  if (subject === 'english') {
-    if (comingSoon) comingSoon.style.display = 'none';
-    if (hrMod) hrMod.style.display = 'none';
-    if (englishMod) englishMod.style.display = 'block';
-    selectEnglishLevel(currentEnglishLevel || 'B1');
-  } else if (subject === 'hr') {
-    if (comingSoon) comingSoon.style.display = 'none';
-    if (englishMod) englishMod.style.display = 'none';
-    if (hrMod) hrMod.style.display = 'block';
-    selectHRTopic(currentHRTopic || 'seleccion');
-  } else if (
-    ['biology', 'physics', 'chemistry', 'math', 'spanish', 'code'].includes(subject)
-  ) {
-    if (englishMod) englishMod.style.display = 'none';
-    if (hrMod) hrMod.style.display = 'none';
-    if (comingSoon) comingSoon.style.display = 'block';
-  } else {
-    if (englishMod) englishMod.style.display = 'none';
-    if (hrMod) hrMod.style.display = 'none';
-    if (comingSoon) comingSoon.style.display = 'none';
-  }
-}
-
-// MÓDULO DE INGLÉS
-function selectEnglishLevel(level) {
-  currentEnglishLevel = level;
-  const targetKey = String(level).trim().toLowerCase();
-  const buttons = document.querySelectorAll('#english-module .btn-level');
-
-  buttons.forEach(btn => {
-    let btnLevel = btn.getAttribute('data-level');
-    if (!btnLevel) {
-      const text = btn.innerText.trim().toLowerCase();
-      if (text.includes('pre-a1') || text.includes('pre a1')) btnLevel = 'prea1';
-      else if (text.includes('a1')) btnLevel = 'a1';
-      else if (text.includes('a2')) btnLevel = 'a2';
-      else if (text.includes('b1')) btnLevel = 'b1';
-      else if (text.includes('b2')) btnLevel = 'b2';
-      else if (text.includes('c1')) btnLevel = 'c1';
-      else if (text.includes('c2')) btnLevel = 'c2';
-      else btnLevel = text;
-    } else {
-      btnLevel = btnLevel.trim().toLowerCase();
-    }
-
-    if (btnLevel === targetKey) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-
-  const levelTitle = document.getElementById('level-title');
-  if (levelTitle) levelTitle.innerText = `Temas Disponibles Nivel ${level}`;
-
-  closeTopicDisplay();
-  renderTopics(
-    level,
-    typeof englishLessonsData !== 'undefined' ? englishLessonsData : {}
-  );
-}
-
-function renderTopics(key, dataSource) {
-  const grid = document.getElementById('topics-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-
-  const lessons =
-    typeof dataSource !== 'undefined' && dataSource[key] ? dataSource[key] : [];
-
-  if (lessons.length === 0) {
-    grid.innerHTML =
-      '<p style="grid-column: 1/-1; color: var(--text-secondary); text-align:center; padding: 20px;">No hay temas disponibles para este módulo por el momento.</p>';
-    return;
-  }
-
-  const fragment = document.createDocumentFragment();
-  lessons.forEach(lesson => {
-    const card = document.createElement('div');
-    card.className = 'topic-card';
-    card.onclick = () => loadTopicContent(lesson.id, key, dataSource);
-    card.innerHTML = `
-      <h5 style="margin-bottom: 6px; font-size:1rem; color:var(--text-primary);">${escapeHTML(lesson.title)}</h5>
-      <p style="font-size:0.85rem; color:var(--text-secondary);">${escapeHTML(lesson.summary)}</p>`;
-    fragment.appendChild(card);
-  });
-  grid.appendChild(fragment);
-}
-
-function loadTopicContent(topicId, key, dataSource) {
-  const topicsListSection = document.getElementById('topics-list-section');
-  const topicContentDisplay = document.getElementById('topic-content-display');
-  const topicLoader = document.getElementById('topic-loader');
-
-  if (topicsListSection) topicsListSection.style.display = 'none';
-  if (topicContentDisplay) topicContentDisplay.style.display = 'none';
-  if (topicLoader) topicLoader.style.display = 'block';
-
-  setTimeout(() => {
-    if (topicLoader) topicLoader.style.display = 'none';
-    const source =
-      dataSource ||
-      (typeof englishLessonsData !== 'undefined' ? englishLessonsData : {});
-    const searchKey = key || currentEnglishLevel;
-    const lessons =
-      typeof source !== 'undefined' && source[searchKey] ? source[searchKey] : [];
-
-    const lesson = lessons.find(l => l.id === topicId);
-    if (!lesson) return;
-
-    const articleContainer = document.getElementById('topic-article');
-    if (articleContainer) {
-      articleContainer.innerHTML = buildLessonHTML(lesson);
-    }
-    if (topicContentDisplay) topicContentDisplay.style.display = 'block';
-  }, 400);
-}
-
-function closeTopicDisplay() {
-  const topicContentDisplay = document.getElementById('topic-content-display');
-  const topicLoader = document.getElementById('topic-loader');
-  const topicsListSection = document.getElementById('topics-list-section');
-
-  if (topicContentDisplay) topicContentDisplay.style.display = 'none';
-  if (topicLoader) topicLoader.style.display = 'none';
-  if (topicsListSection) topicsListSection.style.display = 'block';
-}
-
-// MÓDULO DE RECURSOS HUMANOS
-function selectHRTopic(topicKey) {
-  currentHRTopic = topicKey;
-  const hrButtons = document.querySelectorAll('#hr-module .btn-level');
-
-  hrButtons.forEach(btn => {
-    const onclickAttr = btn.getAttribute('onclick') || '';
-    if (onclickAttr.includes(topicKey)) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-
-  const hrTitles = {
-    seleccion: '1. Selección de Candidatos',
-    entrevista: '2. Entrevista Laboral',
-    induccion: '3. Inducción de Personal',
-    documentacion: '4. Documentación y Procesos Técnicos',
-    nomina: '5. Nómina y Compensaciones',
-    sst: '6. Seguridad y Salud en el Trabajo (SST)'
-  };
-
-  const hrTitleElem = document.getElementById('hr-level-title');
-  if (hrTitleElem) {
-    hrTitleElem.innerText = `Temas Disponibles ${hrTitles[topicKey] || topicKey}`;
-  }
-
-  closeHRTopicDisplay();
-  renderHRTopics(topicKey);
-}
-
-function renderHRTopics(topicKey) {
-  const grid = document.getElementById('hr-topics-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-
-  const dataSource = hrDataMapping[topicKey] || {};
-  let lessons = [];
-
-  if (Array.isArray(dataSource)) {
-    lessons = dataSource;
-  } else {
-    Object.keys(dataSource).forEach(k => {
-      if (Array.isArray(dataSource[k])) {
-        lessons = lessons.concat(dataSource[k]);
-      }
-    });
-  }
-
-  if (lessons.length === 0) {
-    grid.innerHTML =
-      '<p style="grid-column: 1/-1; color: var(--text-secondary); text-align:center; padding: 20px;">No hay lecciones cargadas para este módulo por el momento.</p>';
-    return;
-  }
-
-  const fragment = document.createDocumentFragment();
-  lessons.forEach(lesson => {
-    const card = document.createElement('div');
-    card.className = 'topic-card';
-    card.onclick = () => loadHRTopicContent(lesson, topicKey);
-    card.innerHTML = `
-      <h5 style="margin-bottom: 6px; font-size:1rem; color:var(--text-primary);">${escapeHTML(lesson.title)}</h5>
-      <p style="font-size:0.85rem; color:var(--text-secondary);">${escapeHTML(lesson.summary || lesson.description || '')}</p>`;
-    fragment.appendChild(card);
-  });
-  grid.appendChild(fragment);
-}
-
-function loadHRTopicContent(lesson, topicKey) {
-  const hrTopicsListSection = document.getElementById('hr-topics-list-section');
-  const hrTopicContentDisplay = document.getElementById('hr-topic-content-display');
-  const hrTopicLoader = document.getElementById('hr-topic-loader');
-
-  if (hrTopicsListSection) hrTopicsListSection.style.display = 'none';
-  if (hrTopicContentDisplay) hrTopicContentDisplay.style.display = 'none';
-  if (hrTopicLoader) hrTopicLoader.style.display = 'block';
-
-  setTimeout(() => {
-    if (hrTopicLoader) hrTopicLoader.style.display = 'none';
-    const articleContainer = document.getElementById('hr-topic-article');
-    if (articleContainer) {
-      articleContainer.innerHTML = buildLessonHTML(lesson);
-    }
-    if (hrTopicContentDisplay) hrTopicContentDisplay.style.display = 'block';
-  }, 400);
-}
-
-function closeHRTopicDisplay() {
-  const hrTopicContentDisplay = document.getElementById('hr-topic-content-display');
-  const hrTopicLoader = document.getElementById('hr-topic-loader');
-  const hrTopicsListSection = document.getElementById('hr-topics-list-section');
-
-  if (hrTopicContentDisplay) hrTopicContentDisplay.style.display = 'none';
-  if (hrTopicLoader) hrTopicLoader.style.display = 'none';
-  if (hrTopicsListSection) hrTopicsListSection.style.display = 'block';
-}
-
-function buildLessonHTML(lesson) {
-  return `
-    <h3 style="font-size: 1.4rem; margin-bottom: 8px;">${escapeHTML(lesson.title)}</h3>
-    <p style="color:var(--text-secondary); margin-bottom: 16px;">${escapeHTML(lesson.description || lesson.summary || '')}</p>
-    
-    ${
-      lesson.grammar
-        ? `<div class="lesson-section" style="margin-bottom: 20px;">
-            <h4 style="margin-bottom: 8px; color:var(--accent-color, #4a90e2);">Conceptos y Fundamentos</h4>
-            <p style="line-height:1.5;">${escapeHTML(lesson.grammar).replace(/\n/g, '<br>')}</p>
-          </div>`
-        : ''
-    }
-
-    ${
-      lesson.examples && lesson.examples.length > 0
-        ? `<div class="lesson-section" style="margin-bottom: 20px;">
-            <h4 style="margin-bottom: 8px; color:var(--accent-color, #4a90e2);">Ejemplos Prácticos Explicados</h4>
-            ${lesson.examples
-              .map(
-                ex =>
-                  `<div class="example-box" style="padding: 10px; margin-bottom:8px; border-left:3px solid var(--accent-color, #4a90e2); border-radius: 4px; background: rgba(74, 144, 226, 0.05);">${escapeHTML(
-                    ex
-                  )}</div>`
-              )
-              .join('')}
-          </div>`
-        : ''
-    }
-
-    ${
-      lesson.vocabulary && lesson.vocabulary.length > 0
-        ? `<div class="lesson-section" style="margin-bottom: 20px;">
-            <h4 style="margin-bottom: 8px; color:var(--accent-color, #4a90e2);">Vocabulario e Indicadores Clave</h4>
-            <div class="vocab-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px;">
-              ${lesson.vocabulary
-                .map(
-                  v => `
-                <div class="vocab-card" style="padding: 10px; border-radius: 6px; border:1px solid var(--border-color, #333);">
-                  <div class="vocab-word" style="font-weight: bold;">${escapeHTML(v.word)}</div>
-                  ${
-                    v.phonetic
-                      ? `<div class="vocab-phonetic" style="font-size:0.8rem; color:var(--text-secondary);">${escapeHTML(v.phonetic)}</div>`
-                      : ''
-                  }
-                  <div class="vocab-trans" style="font-size:0.85rem; color:var(--accent-gold, #ffd700);">${escapeHTML(v.trans || v.translation || '')}</div>
-                </div>`
-                )
-                .join('')}
-            </div>
-          </div>`
-        : ''
-    }
-
-    ${
-      lesson.links && lesson.links.length > 0
-        ? `<div class="lesson-section" style="margin-top: 20px;">
-            <h4 style="margin-bottom: 8px; color:var(--accent-color, #4a90e2);">Enlaces Educativos y Fuentes Oficiales</h4>
-            <ul style="list-style:none; padding:0;">
-              ${lesson.links
-                .map(
-                  link => `
-                <li style="margin-bottom: 6px;">
-                  <a href="${sanitizeURL(link.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold, #ffd700); text-decoration:underline;">
-                    ${escapeHTML(link.label)}
-                  </a>
-                </li>`
-                )
-                .join('')}
-            </ul>
-          </div>`
-        : ''
-    }
-  `;
-}
-
-// ==========================================
-// STORE / MARKETPLACE (TRUEQUE SEGURO VÍA SUPABASE RPC)
-// ==========================================
-async function buyItem(itemKey, cost) {
-  let currentTokens = parseInt(localStorage.getItem('user_tokens') || '0', 10);
-  let currentStars = parseInt(localStorage.getItem('user_stars') || '0', 10);
-
-  // Validación si el costo es un objeto (Trueque seguro de Estrellas por Tokens)
-  if (typeof cost === 'object' && cost !== null) {
-    const costStars = cost.stars || 0;      // Estrellas que entrega el usuario
-    const rewardTokens = cost.tokens || 0;   // Tokens que recibe el usuario
-
-    if (currentStars < costStars) {
-      alert(`No tienes suficientes estrellas. Necesitas ${costStars} ⭐ para este trueque.`);
-      return;
-    }
-
-    // Si Supabase está disponible, validamos y ejecutamos mediante la función segura RPC
-    if (supabaseClient) {
-      try {
-        const { data, error } = await supabaseClient.rpc('exchange_stars_for_tokens', {
-          p_email: currentUserEmail,
-          p_cost_stars: costStars,
-          p_reward_tokens: rewardTokens
-        });
-
-        if (error) {
-          console.error('Error en la función RPC de Supabase:', error.message);
-          alert('Hubo un error al procesar el trueque en el servidor.');
-          return;
-        }
-
-        if (data && data.success) {
-          // Actualizamos el navegador con los valores reales blindados por la base de datos
-          localStorage.setItem('user_tokens', data.new_tokens.toString());
-          localStorage.setItem('user_stars', data.new_stars.toString());
-          alert(data.message + ` Has entregado ${costStars} ⭐ y recibido ${rewardTokens.toLocaleString()} 🪙.`);
-          updateUIStats();
-        } else {
-          alert(data ? data.message : 'No se pudo completar el trueque.');
-        }
-      } catch (err) {
-        console.warn('Error de conexión al procesar trueque seguro:', err);
-        alert('Error de red al intentar procesar el trueque.');
-      }
-    } else {
-      // Modo local de respaldo por si no hay cliente disponible
-      currentStars -= costStars;
-      currentTokens += rewardTokens;
-      localStorage.setItem('user_tokens', currentTokens.toString());
-      localStorage.setItem('user_stars', currentStars.toString());
-      alert(`¡Trueque realizado en modo local! Has entregado ${costStars} ⭐ y recibido ${rewardTokens.toLocaleString()} 🪙.`);
-      updateUIStats();
-      syncUserDataWithDB({ tokens: currentTokens, stars: currentStars });
-    }
-    return;
-  }
-
-  // Validación tradicional para compras normales con tokens (como el Protector de Racha)
-  if (currentTokens < cost) {
-    alert('No tienes suficientes tokens para esta compra.');
-    return;
-  }
-
-  if (itemKey === 'streak_shield') {
-    let shields = parseInt(localStorage.getItem('shield_count') || '0', 10);
-    if (shields >= 3) {
-      alert('Ya posees el límite máximo de Protectores de Racha (3).');
-      return;
-    }
-    shields += 1;
-    currentTokens -= cost;
-    localStorage.setItem('shield_count', shields.toString());
-    localStorage.setItem('user_tokens', currentTokens.toString());
-    alert('¡Compra realizada con éxito! Protector de racha añadido.');
-    updateUIStats();
-    syncUserDataWithDB({ tokens: currentTokens, shield_count: shields });
-  }
-}
-// ==========================================
-// MÓDULOS EDUCATIVOS Y PRÁCTICOS DE RRHH
-// ==========================================
-function openHROfficeDesktop() {
-  if (document.getElementById('hr-app-modal')) return;
-  const modal = document.createElement('div');
-  modal.id = 'hr-app-modal';
-  modal.style.cssText = `
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    background: #0f172a; border: 2px solid #38bdf8; border-radius: 16px;
-    width: 90%; max-width: 750px; height: 500px;
-    color: #fff; z-index: 99999;
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3); font-family: sans-serif;
-    display: flex; flex-direction: column; overflow: hidden;
-  `;
-  modal.innerHTML = `
-    <div style="background: #1e293b; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
-      <span style="font-weight: bold; color: #38bdf8;">Sistema de Gestión Humana Supernova HR</span>
-      <button onclick="document.getElementById('hr-app-modal').remove()" style="background: #ef4444; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; cursor: pointer; font-weight: bold;">X Salir</button>
-    </div>
-    <div style="display: flex; flex: 1; overflow: hidden;">
-      <div style="width: 200px; background: #1e293b; padding: 15px; border-right: 1px solid #334155; display: flex; flex-direction: column; gap: 10px;">
-        <button onclick="loadHRSubModule('selection')" style="background: #0284c7; color: #fff; border: none; padding: 10px; border-radius: 8px; text-align: left; cursor: pointer;">Selección (CVs)</button>
-        <button onclick="loadHRSubModule('payroll')" style="background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; text-align: left; cursor: pointer;">Nómina / Pagos</button>
-        <button onclick="loadHRSubModule('sst')" style="background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; text-align: left; cursor: pointer;">SG-SST / Seguridad</button>
-      </div>
-      <div id="hr-module-content" style="flex: 1; padding: 20px; overflow-y: auto;"></div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  loadHRSubModule('selection');
-}
-
-window.loadHRSubModule = function (type) {
-  const content = document.getElementById('hr-module-content');
-  if (!content) return;
-
-  if (type === 'selection') {
-    content.innerHTML = `
-      <h3 style="color: #38bdf8; margin-top: 0;">Módulo de Selección: Evaluar Candidato</h3>
-      <p style="color: #94a3b8; font-size: 14px;">Revisa la Hoja de Vida para el puesto de <strong>Coordinador de Logística</strong> (Requiere: Profesional graduado y +2 años de experiencia).</p>
-      <div style="background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; margin-bottom: 15px;">
-        <p><strong>Candidato:</strong> Carlos Mendoza</p>
-        <p><strong>Estudios:</strong> Licenciado en Administración</p>
-        <p><strong>Experiencia:</strong> 3 años en gestión de inventarios y logística</p>
-        <p><strong>Antecedentes:</strong> Verificados (OK)</p>
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <button onclick="evaluateCandidate(true)" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">✔ Contratar</button>
-        <button onclick="evaluateCandidate(false)" style="background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">X Descartar</button>
-      </div>
-      <div id="hr-feedback" style="margin-top: 15px; font-weight: bold;"></div>
-    `;
-  } else if (type === 'payroll') {
-    content.innerHTML = `
-      <h3 style="color: #38bdf8; margin-top: 0;">Módulo de Nómina: Cálculo Salarial</h3>
-      <p style="color: #94a3b8; font-size: 14px;">Calcula el salario neto deduciendo el 4% de Salud y 4% de Pensión sobre el sueldo base ($1,000 USD).</p>
-      <p>Sueldo Base: $1,000 USD</p>
-      <label style="display: block; margin-bottom: 10px;">Ingresa el valor Neto a pagar: </label>
-      <input type="number" id="payroll-input" placeholder="Ej: 920" style="padding: 8px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; width: 150px;">
-      <button onclick="checkPayroll()" style="background: #38bdf8; color: #000; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-left: 10px;">Verificar</button>
-      <div id="payroll-feedback" style="margin-top: 15px; font-weight: bold;"></div>
-    `;
-  } else if (type === 'sst') {
-    content.innerHTML = `
-      <h3 style="color: #38bdf8; margin-top: 0;">SG-SST: Inspección de Puesto de Trabajo</h3>
-      <p style="color: #94a3b8; font-size: 14px;">Marca los riesgos detectados en la oficina de bodega:</p>
-      <label style="display: block; margin: 8px 0;"><input type="checkbox" id="risk1"> Cable de alta tensión expuesto en el suelo</label>
-      <label style="display: block; margin: 8px 0;"><input type="checkbox" id="risk2"> Silla ergonómica en buen estado</label>
-      <label style="display: block; margin: 8px 0;"><input type="checkbox" id="risk3"> Extintor con fecha vencida</label>
-      <button onclick="checkSST()" style="background: #22c55e; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px;">Emitir Reporte</button>
-      <div id="sst-feedback" style="margin-top: 15px; font-weight: bold;"></div>
-    `;
-  }
-};
-
-window.evaluateCandidate = function (isAccepted) {
-  const fb = document.getElementById('hr-feedback');
-  if (isAccepted) {
-    fb.style.color = '#22c55e';
-    fb.innerHTML =
-      '¡Correcto! El candidato cumple con el perfil académico y el tiempo de experiencia requerido.';
-  } else {
-    fb.style.color = '#ef4444';
-    fb.innerHTML =
-      'Incorrecto. El candidato sí cumplía con los 2 años requeridos y la titulación profesional.';
-  }
-};
-
-window.checkPayroll = function () {
-  const val = parseFloat(document.getElementById('payroll-input').value);
-  const fb = document.getElementById('payroll-feedback');
-  if (val === 920) {
-    fb.style.color = '#22c55e';
-    fb.innerHTML =
-      '¡Excelente! $1,000 - $40 (Salud 4%) - $40 (Pensión 4%) = $920 USD.';
-  } else {
-    fb.style.color = '#ef4444';
-    fb.innerHTML =
-      'Respuesta incorrecta. Recuerda descontar en total el 8% de aportes a la seguridad social ($80).';
-  }
-};
-
-window.checkSST = function () {
-  const r1 = document.getElementById('risk1').checked;
-  const r2 = document.getElementById('risk2').checked;
-  const r3 = document.getElementById('risk3').checked;
-  const fb = document.getElementById('sst-feedback');
-
-  if (r1 && !r2 && r3) {
-    fb.style.color = '#22c55e';
-    fb.innerHTML =
-      '¡Reporte Aprobado! Identificaste adecuadamente los 2 factores de riesgo (cable expuesto y extintor vencido).';
-  } else {
-    fb.style.color = '#ef4444';
-    fb.innerHTML =
-      'Revisa de nuevo. Solo debes marcar los elementos que representan un PELIGRO para el trabajador.';
-  }
-};
-
-function openCustomerServiceModule() {
-  if (document.getElementById('cafe-app-modal')) return;
-  const modal = document.createElement('div');
-  modal.id = 'cafe-app-modal';
-  modal.style.cssText = `
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    background: #1c1917; border: 2px solid #f59e0b; border-radius: 16px;
-    width: 90%; max-width: 550px; padding: 20px; color: #fff; z-index: 99999;
-    box-shadow: 0 0 30px rgba(245, 158, 11, 0.3); font-family: sans-serif;
-  `;
-  modal.innerHTML = `
-    <h3 style="color: #f59e0b; margin-top: 0;">Coffee House Atención de Reclamos</h3>
-    <p style="color: #d6d3d1; font-size: 14px;">Un cliente se acerca molesto diciendo que le entregaron el pedido equivocado y tiene prisa.</p>
-    <p><strong>¿Cómo respondes aplicando la comunicación asertiva?</strong></p>
-    <button onclick="answerCafe(1)" style="display: block; width: 100%; text-align: left; background: #292524; color: #fff; border: 1px solid #44403c; padding: 10px; margin: 8px 0; border-radius: 8px; cursor: pointer;">A. "Cálmese, no es para tanto, espere su turno mientras reviso."</button>
-    <button onclick="answerCafe(2)" style="display: block; width: 100%; text-align: left; background: #292524; color: #fff; border: 1px solid #44403c; padding: 10px; margin: 8px 0; border-radius: 8px; cursor: pointer;">B. "Lamento mucho el inconveniente. Permítame su ticket y de inmediato le entrego la orden correcta prioritariamente."</button>
-    <div id="cafe-feedback" style="margin-top: 15px; font-weight: bold;"></div>
-    <button onclick="document.getElementById('cafe-app-modal').remove()" style="background: #ef4444; color: #fff; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-top: 10px;">Cerrar</button>
-  `;
-  document.body.appendChild(modal);
-
-  window.answerCafe = function (option) {
-    const fb = document.getElementById('cafe-feedback');
-    if (option === 2) {
-      fb.style.color = '#22c55e';
-      fb.innerHTML =
-        '¡Excelente! Muestras empatía, asumes la responsabilidad y das solución rápida al cliente.';
-    } else {
-      fb.style.color = '#ef4444';
-      fb.innerHTML =
-        'Respuesta incorrecta. Decirle que se calme genera mayor frustración y escala el conflicto.';
-    }
-  };
-}
-
-// Reinicio en cambio de pestaña para el juego 3D
-const originalSwitchTab = window.switchTab;
-window.switchTab = function (tabName) {
-  if (typeof originalSwitchTab === 'function') {
-    originalSwitchTab(tabName);
-  }
-  if (tabName === 'games' || tabName === 'tab-games') {
-    const navDropdown = document.getElementById('nav-dropdown');
-    if (navDropdown) navDropdown.blur();
-    if (typeof init3DGame === 'function') setTimeout(init3DGame, 100);
-  }
-};

@@ -1,0 +1,230 @@
+/* ==========================================
+   CENTRO DE APRENDIZAJE (ESFERAS DE SUPERNOVA)
+   ========================================== */
+.level-buttons-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 1.5rem 0;
+  justify-content: center;
+}
+
+.btn-level {
+  background: linear-gradient(135deg, rgba(19, 29, 59, 0.9), rgba(35, 50, 90, 0.9));
+  color: var(--text-primary);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-level:hover:not(.disabled) {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(239, 68, 68, 0.25));
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+}
+
+.btn-level.active {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, #2563eb 100%);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+  font-weight: 800;
+}
+
+.btn-level.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.module-locked-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+}
+
+.topics-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 55px;
+  margin-top: 40px;
+  padding: 30px 0;
+  position: relative;
+}
+
+/* Esfera Supernova de Alto Contraste: Núcleo oscuro espacial y corona de plasma ardiente */
+.topic-card {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  background: radial-gradient(circle at 50% 50%, #0d1b3a 0%, #172554 45%, #b91c1c 78%, #7c2d12 100%);
+  border: 3px solid rgba(251, 191, 36, 0.9);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 0 40px rgba(239, 68, 68, 0.5), 
+    inset 0 0 25px rgba(56, 189, 248, 0.4),
+    inset 0 0 50px rgba(0, 0, 0, 0.8);
+  animation: pulseSupernova 5s ease-in-out infinite;
+}
+
+.topic-card::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border-radius: 50%;
+  border: 2px dashed rgba(251, 191, 36, 0.65);
+  animation: rotateNebula 14s linear infinite;
+  pointer-events: none;
+}
+
+.topic-card::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border-radius: 50%;
+  border: 1px dotted rgba(244, 63, 94, 0.55);
+  animation: rotateNebulaReverse 20s linear infinite;
+  pointer-events: none;
+}
+
+.topic-card:nth-child(4n + 1) {
+  transform: translateX(-95px);
+}
+.topic-card:nth-child(4n + 2) {
+  transform: translateX(-20px);
+}
+.topic-card:nth-child(4n + 3) {
+  transform: translateX(85px);
+}
+.topic-card:nth-child(4n + 4) {
+  transform: translateX(10px);
+}
+
+@keyframes pulseSupernova {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.5), inset 0 0 25px rgba(56, 189, 248, 0.4), inset 0 0 50px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 65px rgba(251, 191, 36, 0.75), inset 0 0 35px rgba(56, 189, 248, 0.7), inset 0 0 70px rgba(0, 0, 0, 0.9);
+  }
+}
+
+@keyframes rotateNebula {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rotateNebulaReverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.topic-card:hover {
+  border-color: #ffffff;
+  transform: scale(1.15) translateY(-5px) !important;
+  background: radial-gradient(circle at 50% 50%, #1e3a8a 0%, #1d4ed8 45%, #dc2626 78%, #9a3412 100%);
+  box-shadow: 
+    0 0 75px rgba(251, 191, 36, 0.9), 
+    inset 0 0 40px rgba(255, 255, 255, 0.6),
+    inset 0 0 80px rgba(0, 0, 0, 0.9);
+  z-index: 10;
+}
+
+/* Texto de legibilidad impecable (Blanco brillante sobre el núcleo oscuro) */
+.topic-card h5 {
+  font-size: 0.92rem;
+  color: #ffffff;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  text-shadow: 
+    0 0 6px rgba(0, 0, 0, 0.9),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  line-height: 1.25;
+  z-index: 2;
+}
+
+.topic-card p {
+  display: none;
+}
+
+.topic-display-card {
+  background: linear-gradient(145deg, rgba(19, 29, 59, 0.96), rgba(11, 19, 41, 0.98));
+  border: 2px solid var(--accent-blue);
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.topic-display-card article h3 {
+  color: var(--accent-blue);
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.topic-display-card article p {
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.lesson-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.lesson-section h4 {
+  color: var(--accent-blue);
+  font-size: 1.15rem;
+  margin-bottom: 10px;
+}
+
+.example-box {
+  background: rgba(56, 189, 248, 0.08);
+  border-left: 4px solid var(--accent-blue);
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.subject-selection {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.subject-selection label {
+  font-weight: 700;
+  color: var(--text-secondary);
+}

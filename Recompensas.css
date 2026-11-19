@@ -1,0 +1,49 @@
+
+/* ==========================================
+   SISTEMA DE RECOMPENSAS DIARIAS Y NAVEGACIÓN
+   ========================================== */
+#bing-rewards-grid,
+#time-rewards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.bing-reward-btn {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bing-reward-btn.claimed {
+  border-color: var(--accent-green);
+  background: rgba(34, 197, 94, 0.18);
+  color: #86efac;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.25);
+}
+
+.bing-reward-btn.available {
+  border-color: var(--accent-blue);
+  background: rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+  transform: scale(1.05);
+}
+
+.bing-reward-btn.locked {
+  opacity: 0.6;
+  background: rgba(255, 255, 255, 0.02);
+}
